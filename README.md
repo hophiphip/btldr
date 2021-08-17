@@ -1,6 +1,9 @@
 # btldr
 Bootloader that does nothing useful
 
+# Note
+Requires [nasm](https://www.nasm.us/) compiler and [QEMU](https://www.qemu.org/) VM installed
+
 # Usage
 
 ## Compile
