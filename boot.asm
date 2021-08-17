@@ -41,10 +41,22 @@ entry:
   
   draw_cells:
     mov ax, 0
-    mov cl, COLOR_LIGHTCYAN
     draw_vertial:
       mov bx, 0
       draw_horizontal:
+        push ax
+        push dx
+          ; TimeStampCounter: puts counter into `ax`
+          rdtsc 
+          xor dx, dx
+          mov cx, COLOR_WHITE - COLOR_LIGHTBLUE + 1
+          div cx
+          mov ax, dx
+          add ax, COLOR_LIGHTBLUE
+          mov cl, al
+        pop dx
+        pop ax
+
         call put_cell
         add bx, CELL_WIDTH
         cmp bx, SCREEN_WIDTH
