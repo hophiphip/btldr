@@ -22,6 +22,7 @@ org 0x7c00
 %define FIELD_X (SCREEN_WIDTH - (FIELD_WIDTH * CELL_WIDTH)) / 2
 %define FIELD_END_Y (SCREEN_HEIGHT - FIELD_Y)
 %define FIELD_END_X (SCREEN_WIDTH - FIELD_X)
+%define FIELD_START (FIELD_Y * SCREEN_WIDTH) + FIELD_X
 
 ; in pixels
 %define PALETTE_OFFSET 10
@@ -65,6 +66,24 @@ entry:
   call put_field
   call put_palette
 
+  ; TESTING BEGIN ===============================================
+  ; NOTE: `get_cell_pixel` is not correct for indexes > 0 
+  mov ax, 0
+  call get_cell_pixel
+  mov di, ax
+  xor ax, ax
+ 
+  ; get
+  mov ax, [es:di]
+  
+  ; testing set to see the cell color
+  mov di, 0
+  mov [es:di], al
+  mov [es:di+1], al
+  mov [es:di+320], al
+  mov [es:di+321], al
+  ; TESTING END =================================================
+
   entry_loop:
     call put_underscore
 
@@ -89,6 +108,52 @@ entry:
     jmp entry_loop
 
   jmp end
+
+
+; ax <- cell index
+; puts 0 in 'ax' if cell doesn't belong to anybody, otherwise puts '1'
+get_player:
+  ; TODO: 
+  ret
+
+; ax <- cell index
+; assignes cell to a player by coloring top-left corner of the cell 
+add_player:
+  ; TODO: 
+  ret
+
+; ax <- cell index
+; assignes cell first pixel index to 'ax'
+get_cell_pixel:
+  ; ax < 0
+  cmp ax, 0
+  jl get_cell_pixel_end
+
+  ; ax >= FIELD_WIDTH * FIELD_HEIGHT
+  cmp ax, FIELD_WIDTH * FIELD_HEIGHT
+  jge get_cell_pixel_end
+
+  push dx
+  push bx
+    xor dx, dx          ; dx = 000..
+    mov cx, FIELD_WIDTH ; cx = FIELD_WIDTH
+    div cx              ; (dx:ax) == (000...ax) / cx ==> ax <- div & dx <- mod
+
+    mov bx, CELL_HEIGHT ; bx = CELL_HEIGHT
+    mul bx              ; ax *= bx
+    add ax, FIELD_START ; ax += FIELD_START 
+
+    mov bx, ax          ; bx = ax
+    mov ax, CELL_WIDTH  ; ax = CELL_WIDTH
+    mul dx              ; ax *= dx
+    
+    add bx, ax          ; bx += ax
+    mov ax, bx          ; ax = bx
+  pop bx
+  pop dx
+
+  get_cell_pixel_end:
+    ret
 
 col_dec:
   push ax
