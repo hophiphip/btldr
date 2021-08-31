@@ -68,7 +68,7 @@ entry:
 
   ; TESTING BEGIN ===============================================
   ; NOTE: `get_cell_pixel` is not correct for indexes > 0 
-  mov ax, 1
+  mov ax, 2
   call get_cell_pixel
   mov di, ax
   xor ax, ax
@@ -139,15 +139,15 @@ get_cell_pixel:
     mov cx, FIELD_WIDTH ; cx = FIELD_WIDTH
     div cx              ; (dx:ax) == (000...ax) / cx ==> ax <- div & dx <- mod
 
-    mov bx, CELL_HEIGHT  ; bx = CELL_HEIGHT
-    mul bx               ; ax *= bx
-    mov bx, SCREEN_WIDTH ; bx = SCREEN_WIDTH
-    mul bx               ; ax *= bx
+    mov bl, CELL_HEIGHT  ; bl = CELL_HEIGHT
+    mul bl               ; ax *= bl (8-bit so `dx` won't get zeroed)
+    mov bl, SCREEN_WIDTH ; bl = SCREEN_WIDTH
+    mul bl               ; ax *= bl
     add ax, FIELD_START  ; ax += FIELD_START 
     ; NOTE: Sth wrong with X 
     mov bx, ax          ; bx = ax
     mov ax, CELL_WIDTH  ; ax = CELL_WIDTH
-    mul dl              ; ax *= dx
+    mul dx              ; ax *= dx
     
     add bx, ax          ; bx += ax
     mov ax, bx          ; ax = bx
