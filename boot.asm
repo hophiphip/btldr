@@ -66,24 +66,6 @@ entry:
   call put_field
   call put_palette
 
-  ; TESTING BEGIN ===============================================
-  ; NOTE: `get_cell_pixel` is not correct for indexes > 0 
-  mov ax, 20
-  call get_cell_pixel
-  mov di, ax
-  xor ax, ax
- 
-  ; get
-  mov ax, [es:di]
-  
-  ; testing set to see the cell color
-  mov di, 0
-  mov [es:di], al
-  mov [es:di+1], al
-  mov [es:di+320], al
-  mov [es:di+321], al
-  ; TESTING END =================================================
-
   entry_loop:
     call put_underscore
 
